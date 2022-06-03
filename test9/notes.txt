@@ -1,0 +1,142 @@
+1 -- connect to metamask
+
+2 -- connect to contract
+    connect ganache to metamask
+
+3 -- read from contract
+    use call() method
+
+4 -- change data on contract
+    import ganache account to metamask
+    use send() method
+
+5 -- 
+Change from Ganache-Remix-Metamask to Rinkeby-Remix-Metamask
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SMART CONTRACT TEST</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
+    <style>
+        body {
+            background-color: palevioletred;
+            font-size: 33px;
+            text-align: center;
+        }
+        button {
+            background-color: aquamarine;
+            font-size: 33px;
+            font-family: impact;
+        }
+        button:hover {
+            background-color: yellow;
+        }
+        input {
+            width: 40%;
+            height: 33px;
+            font-size: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <button onclick="connectMetamask()">CONNECT TO METAMASK</button> <br>
+	<p id="accountArea">Connection Status: NOT CONNECTED to Metamask </p>
+
+	<button onclick="connectContract()">CONNECT TO CONTRACT</button> <br>
+	<p id="contractArea">Connection Status: NOT CONNECTED to Smart Contract</p>
+
+	<button onclick="readWord()">GET DATA FROM CONTRACT</button> <br>
+	<p id="dataArea">Data Status: NO Data from Smart Contract </p>
+
+	<button onclick="changeWord()">CHANGE DATA ON THE SMART CONTRACT</button> <br>
+    <input type="text" id="inputArea">
+
+    <script>
+
+    </script>
+</body>
+</html>
+
+
+
+const express = require("express");
+const path = require("path");
+
+const app = express();
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname + "/index.html"));
+})
+
+const server = app.listen(5000);
+const portNumber = server.address().port;
+console.log("server: "+ portNumber);
+
+
+
+//SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.8.7;
+
+contract Test9 {
+    string internal flower = "rose";
+
+    function getFlower() external view returns(string memory) {
+        return flower;
+    }
+
+    function changeFlower(string memory _word) external {
+        flower = _word;
+    }
+}
+
+
+
+
+
+        let account;
+        const connectMetamask = async () => {
+            if(window.ethereum !== "undefined"){
+                const accounts = await ethereum.request({method: "eth_requestAccounts"});
+                account = accounts[0];
+                document.getElementById("accountArea").innerHTML = `Your Account is: ${account}`;
+            }
+        }
+
+        const connectContract = async () => {
+            const ABI = [];
+            const Address = "";
+            window.web3 = await new Web3(window.ethereum);
+            window.contract = await new window.web3.eth.Contract(ABI, Address);
+            document.getElementById("contractArea").innerHTML = "connected successfully";
+        }

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SMART CONTRACT TEST</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
+    <style>
+        body {
+            background-color: palevioletred;
+            font-size: 33px;
+            text-align: center;
+        }
+        button {
+            background-color: aquamarine;
+            font-size: 33px;
+            font-family: impact;
+        }
+        button:hover {
+            background-color: yellow;
+        }
+        input {
+            width: 40%;
+            height: 33px;
+            font-size: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <button onclick="connectMetamask()">CONNECT TO METAMASK</button> <br>
+	<p id="accountArea">Connection Status: NOT CONNECTED to Metamask </p>
+
+	<button onclick="connectContract()">CONNECT TO CONTRACT</button> <br>
+	<p id="contractArea">Connection Status: NOT CONNECTED to Smart Contract</p>
+
+	<button onclick="readWord()">GET DATA FROM CONTRACT</button> <br>
+	<p id="dataArea">Data Status: NO Data from Smart Contract </p>
+
+	<button onclick="changeWord()">CHANGE DATA ON THE SMART CONTRACT</button> <br>
+    <input type="text" id="inputArea"> 
+
+    <script>
+        let account;
+        const connectMetamask = async () => {
+            if(window.ethereum !== "undefined"){
+                const accounts = await ethereum.request({method: "eth_requestAccounts"});
+                account = accounts[0];
+                document.getElementById("accountArea").innerHTML = `Account is: ${account}`;
+            }
+
+        }
+
+        const connectContract = async () => {
+            const ABI = [
+                {
+                    "inputs": [
+                        {
+                            "internalType": "string",
+                            "name": "_word",
+                            "type": "string"
+                        }
+                    ],
+                    "name": "changeFlower",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "getFlower",
+                    "outputs": [
+                        {
+                            "internalType": "string",
+                            "name": "",
+                            "type": "string"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                }
+            ];
+            const Address = "0x4FC39a355E153af4B61D7C6c8C0682f4cd0EbA73";
+            window.web3 = await new Web3(window.ethereum);
+            window.contract = await new window.web3.eth.Contract(ABI, Address);
+            document.getElementById("contractArea").innerHTML = "Connection Status: Success";
+        }
+
+        const readWord = async () => {
+            const data = await window.contract.methods.getFlower().call();
+            document.getElementById("dataArea").innerHTML = `Word is: ${data}`;
+        }
+
+        const changeWord = async () => {
+            const myEntry = document.getElementById("inputArea").value;
+            await window.contract.methods.changeFlower(myEntry).send({ from: account });
+        }
+    </script>
+</body>
+</html>
