@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>READ FROM SMART CONTRACT</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
+    <style>
+        body {
+            background-color: palevioletred;
+            font-size: 33px;
+            text-align: center;
+        }
+        button {
+            background-color: aquamarine;
+            font-size: 33px;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="accessToMetamask()">CONNECT METAMASK</button> <br>
+    <p id="accountArea"></p>
+    <br>
+    <br>
+    <button onclick="accessToContract()">ACCESS TO SMART CONTRACT</button>
+    <p id="accessArea"></p>
+    <br>
+    <br>
+
+    <button onclick="readFromContract()">READ FROM SMART CONTRACT</button>
+    <p id="contractArea"></p>
+
+
+
+    <script>
+        
+        //If I take accessToMetamask function part out, then the code will still work. 
+        //However I will not be able to call a write method. Because I would not have an 
+        //account to send gas.
+        let account;
+        const accessToMetamask = async () => {
+            if(window.ethereum !== "undefined") {
+                const accounts = await ethereum.request({ method: "eth_requestAccounts"});
+                account = accounts[0];
+                document.getElementById("accountArea").innerHTML = account;
+            }
+        }
+
+
+
+        const accessToContract = async () => {
+            const ABI = [
+                {
+                    "inputs": [],
+                    "name": "myCity",
+                    "outputs": [
+                        {
+                            "internalType": "string",
+                            "name": "",
+                            "type": "string"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                }
+            ];
+            const Address = '0x69a0de966efB002b45b73482403563312ca897bb';
+            window.web3 = await new Web3(window.ethereum);
+            window.contract = await new window.web3.eth.Contract( ABI, Address); 
+        } 
+        
+            
+
+        const readFromContract = async () => {
+          const data = await window.contract.methods.myCity().call();
+          document.getElementById("contractArea").innerHTML = data;
+        }
+
+    </script>
+</body>
+</html>
