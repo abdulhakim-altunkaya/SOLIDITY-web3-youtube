@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CONNECTION TO METAMASK</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
+    <style>
+        body {
+            background-color: palevioletred;
+            font-size: 33px;
+            text-align: center;
+        }
+        button {
+            background-color: aquamarine;
+            font-size: 33px;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
+        button:hover {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+	<button onclick="connectMetamask()">CONNECT TO METAMASK</button> <br>
+	<p id="accountArea"></p>
+	<button onclick="connectContract()">CONNECT TO CONTRACT</button> <br>
+	<p id="contractArea"></p>
+	<button onclick="readContract()">GET DATA FROM CONTRACT</button> <br>
+	<p id="dataArea"></p>
+
+
+    <script>
+        //1- connect metamask
+        let account;
+        const connectMetamask = async () => {
+            if(window.ethereum !== "undefined") {
+                const accounts = await ethereum.request({method: "eth_requestAccounts"});
+                account = accounts[0];
+                document.getElementById("accountArea").innerHTML = account;
+            }
+        }
+
+        //2- connect to smart contract
+        const connectContract = async () => {
+            const ABI = [
+                {
+                    "inputs": [],
+                    "name": "myCity",
+                    "outputs": [
+                        {
+                            "internalType": "string",
+                            "name": "",
+                            "type": "string"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                }
+            ];
+            const Address = "0x1DCabB8360c16728f0ce5e41BF58ec5eA1a5bA45";
+            window.web3 = await new Web3(window.ethereum);
+            window.contract = await new window.web3.eth.Contract( ABI, Address); 
+            document.getElementById("contractArea").innerHTML = "connected to smart contract";
+        }
+
+        //3-read data from smart contract
+        const readContract = async () => {
+            const data = await window.contract.methods.myCity().call();
+            document.getElementById("dataArea").innerHTML = data;
+        }
+    </script>
+</body>
+</html>
