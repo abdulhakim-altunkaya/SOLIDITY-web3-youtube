@@ -1,0 +1,60 @@
+const HDWalletProvider = require("@truffle/hdwallet-provider");
+require('dotenv').config()
+const privateKeys = [`0x${process.env.PRIVATE_KEY}`]
+    
+    matic: {
+      provider: () => new HDWalletProvider(privateKeys, `.....`),
+      network_id: 80001,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true
+    }
+
+
+    avalanche: {
+      provider: () => new HDWalletProvider(privateKeys, `https://avax.getblock.io/testnet/ext/bc/C/rpc?api_key=ef3c11a6-8211-47a2-906e-7c35d48d18e5`),
+      network_id: 43113,
+      skipDryRun: true,
+      disableConfirmationListener: true
+    }
+
+
+
+
+
+.env File
+PRIVATE_KEY="b....4.....99......9c...5"
+add .env to .gitignore
+
+
+
+
+
+
+Network Name: Mumbai Testnet
+New RPC URL: https://rpc-mumbai.maticvigil.com/
+Chain ID: 80001
+Currency Symbol: MATIC
+Block Explorer URL: https://polygonscan.com/
+
+
+
+Network Name: Avalanche FUJI C-Chain
+New RPC URL: https://api.avax-test.network/ext/bc/C/rpc
+ChainID: 43113
+Symbol: AVAX
+Explorer: https://testnet.snowtrace.io/
+
+
+
+//SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.8.7;
+
+contract Simple {
+	uint public myNumber = 5;
+
+	function changeNumber(uint _newNumber) external {
+		myNumber = _newNumber;
+	}
+}
