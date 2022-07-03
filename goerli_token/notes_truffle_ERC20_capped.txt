@@ -1,0 +1,92 @@
+1) Create an empty folder
+
+2) Open CMD on the folder and install following packages:
+
+	npm install @truffle/hdwallet-provider
+	npm install @openzeppelin/contracts
+	npm install dotenv
+
+3) on CMD: truffle init
+
+4) Create your contract in "Contracts" folder:
+
+	//SPDX-License-Identifier: GPL-3.0
+	pragma solidity >=0.8.4;
+	import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+	import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
+	contract FlowerCoin is ERC20 {
+    		constructor() ERC20("FlowerCoin", "FLCO") {
+        		_mint(msg.sender, 100*10**18);
+    		}
+
+	}
+
+(Note: This is "fixed supply" token. Other logics: "uncapped lazy supply" and "capped modular supply")
+
+5) Create deployment file in "Migrations" folder: Copy-paste from existing file and adapt it to your contract.
+
+6) If your metamask account does not have goerliETH, visit https://goerlifaucet.com/ and get some test ETH.
+
+7) Then create a ".env" file at the root of your folder and copy-paste here your metamask account private key
+
+8) Then create a ".gitignore" file at the root of our folder, and add "node_modules" and ".env"
+So that we will not expose our private key. (Note: dont add quotes)
+
+9) Go to "truffle.config.js" and add these 3 lines of code the beginning of the file:
+
+	const HDWalletProvider = require("@truffle/hdwallet-provider");
+	require('dotenv').config()
+	const privateKeys = [`0x${process.env.PRIVATE_KEY}`]
+
+10) Make sure the compile version matches your contract's pragma statement
+
+11) Then add goerli testnet parameters under the "networks" object:
+
+    goerli: {
+      provider: () => {
+        return new HDWalletProvider(privateKeys, `Hi, mmy https endpoint will come here`);
+      },
+      skipDryRun: true,
+      network_id: '5' 
+    }
+
+(Note: these are template literals: ``, not quotes: "" )
+
+12) truffle compile
+
+13) truffle migrate network --goerli
+
+15) Copy contract address
+
+16) Go to metamask, click on "import tokens" and paste your contract address. NoW you have tokens in your account.
+
+17) You can check transaction hash in goerli.etherscan website: https://goerli.etherscan.io/
+
+
+NOTE: HERE IS THE CONTRACT WE DEPLOYED. YOU CAN CHECK TRANSACTION HASH ON GOERLI ETHERSCAN:
+2_deploy_flowercoin.js
+======================
+
+   Deploying 'FlowerCoin'
+   ----------------------
+   > transaction hash:    0xc07fb1d8b9ee4674120dd6f20d9909bb3be3f6572f633791a887ccd0a3c70cc3
+   > Blocks: 1            Seconds: 9
+   > contract address:    0xbA2a6fF12fCeE8CdFa784C81559FCDBcC355F487
+   > block number:        7163898
+   > block timestamp:     1656875937
+   > account:             0x547Fdf051df6454322cb7100A4d8edDE8B17a45E
+   > balance:             0.072478424461002493
+   > gas used:            1169419 (0x11d80b)
+   > gas price:           2.500000007 gwei
+   > value sent:          0 ETH
+   > total cost:          0.002923547508185933 ETH
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:     0.002923547508185933 ETH
+
+Summary
+=======
+> Total deployments:   2
+> Final cost:          0.003544027509923277 ETH
