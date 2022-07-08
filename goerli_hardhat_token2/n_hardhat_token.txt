@@ -1,0 +1,64 @@
+1) create a folder and on CMD: npm init -y
+
+2) 
+npm install --save-dev hardhat
+npm install --save-dev dotenv
+npm install --save-dev @openzeppelin/contracts
+npm install --save-dev @nomicfoundation/hardhat-toolbox
+npm install --save-dev "@nomiclabs/hardhat-ethers@^2.0.0"
+npm install --save-dev ethers
+npm install --save-dev "@nomicfoundation/hardhat-network-helpers@^1.0.0" "@nomicfoundation/hardhat-chai-matchers@^1.0.0" "@nomiclabs/hardhat-etherscan@^3.0.0" "@types/mocha@^9.1.0" "@typechain/ethers-v5@^10.1.0" "@typechain/hardhat@^6.1.2" "chai@^4.2.0" "hardhat-gas-reporter@^1.0.8" "solidity-coverage@^0.7.21" "ts-node@>=8.0.0" "typechain@^8.1.0" "typescript@>=4.5.0"
+
+
+
+3) npx hardhat
+4) Add your contract to Contracts folder:
+//SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.8.7;
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
+contract YellowFlower is ERC20 {
+  
+    constructor() ERC20("YellowFlower", "YELLOW"){
+        _mint(msg.sender, 5000*10**18);
+    }
+}
+
+5) 
+6) Go to Alchemy, create an app, click view key and copy https endpoint
+7) Create an ".env" file at the root
+PRIVATE_KEY="......"
+8) Create an .gitignore file
+add: "node_modules" and ".env" (without quotes)
+
+9) Go to hardhat.config.js and add this to the beginning of the file
+require("dotenv").config();
+
+10) go to hardhat.config.js and add this to module exports section
+module.exports = {
+  solidity: "0.8.4",
+  networks: {
+    mumbai: {
+      url: "SOME LINK I NEED HERE",
+      accounts: [`0x${process.env.PRIVATE_KEY}`]
+    }
+  }
+};
+
+11) Make sure solidity version is compatible with contract solidity version. 
+12) Rename scripts/sample-script.js to "deploy.js"
+and change async main function to this:
+
+async function main() {
+  const YellowFlower = await hre.ethers.getContractFactory("YellowFlower");
+  const yellowFlower = await YellowFlower.deploy();
+  await yellowFlower.deployed();
+  console.log("Token deployed to:", yellowFlower.address);
+}
+
+Be careful about the capital and small letters. Your smart contract file name and contract name should be capital and 
+match the first variable. 
+
+13) npx hardhat compile
+
+14) npx hardhat run ./scripts/deploy.js --network goerli
