@@ -2,8 +2,6 @@ body {
     background-color: palevioletred;
     font-family: tahoma;
     font-size: 33px;
-    display: flex;
-    flex-direction: row;
   }
   button {
     background-color: aquamarine;

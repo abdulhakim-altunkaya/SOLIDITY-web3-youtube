@@ -1,0 +1,162 @@
+🚩🚩🚩 REACT PART 🚩🚩🚩
+
+⏩1) create a react project
+npx create-react-app myproject
+
+⏩2) 
+npm install --save-dev hardhat
+npm install --save-dev dotenv
+npm install --save-dev @openzeppelin/contracts
+npm install --save-dev @nomicfoundation/hardhat-toolbox @nomiclabs/hardhat-ethers@^2.0.0
+npm install --save-dev "@nomiclabs/hardhat-ethers@^2.0.0"
+npm install --save-dev ethers
+npm install --save-dev "@nomicfoundation/hardhat-network-helpers@^1.0.0" "@nomicfoundation/hardhat-chai-matchers@^1.0.0" "@nomiclabs/hardhat-etherscan@^3.0.0" "@types/mocha@^9.1.0" "@typechain/ethers-v5@^10.1.0" "@typechain/hardhat@^6.1.2" "chai@^4.2.0" "hardhat-gas-reporter@^1.0.8" "solidity-coverage@^0.7.21" "ts-node@>=8.0.0" "typechain@^8.1.0" "typescript@>=4.5.0"
+
+
+⏩3) Not obligatory but you can remove unnecessary files from react folders
+
+⏩4) Add your CSS style and basic component structure
+
+⏩5) Create function and add necessary code
+
+
+*** BASIC COMPONENT STRUCTURE *** 
+
+import { useState } from "react";
+function App() {
+  const { ethereum } = window;
+  let [account, setAccount] = useState("");
+  let [contractData, setContractData] = useState("");
+
+  const connectMetamask = async () => {
+    if (window.ethereum) {
+      const accounts = await ethereum.request({method: "eth_requestAccounts"});
+      account = accounts[0];
+      setAccount(account);
+    }
+  }
+
+  const connectContract = async () => {
+    return;
+  }
+  const getData = async () => {
+    return;
+  }
+  return (
+    <div className="App">
+          <button onClick={connectMetamask}>CONNECT TO METAMASK</button>
+          <p>{account}</p>
+          <button onClick={connectContract}>CONNECT TO CONTRACT</button>
+          <button onClick={getData}>READ FROM CONTRACT</button>
+          <p>{contractData}</p>
+    </div>
+  );
+}
+export default App;
+
+
+*** BASIC CSS STRUCTURE *** 
+
+body {
+  background-color: palevioletred;
+  font-family: tahoma;
+  font-size: 33px;
+  display: flex;
+  flex-direction: row;
+}
+button {
+  background-color: aquamarine;
+  font-size: 33px;
+  padding: 5px;
+  font-family: Impact;
+}
+button:hover {
+  background-color: yellow;
+}
+
+⏩6) Check if your react application works and with button click you can connect to metamask and grab account info and
+display it on browser
+
+🚩🚩🚩 HARDHAT PART 🚩🚩🚩
+
+⏩7) npx hardhat
+
+⏩8) Go to contracts folder and create a Flower.sol and add inside:
+//SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.8.7;
+contract Flower {
+    string public myFlower = "Rose";
+    function changeWord(string memory _word) external {
+        myFlower = _word;
+    }
+}
+
+⏩9) Go to "scripts" folder and replace main function with this:
+async function main() {
+  const Flower = await hre.ethers.getContractFactory("Flower");
+  const flower = await Flower.deploy();
+  await flower.deployed();
+  console.log("Token deployed to:", flower.address);
+}
+
+
+⏩10) Make sure pragma solidity are same in Flower.sol and hardhat.config.js
+
+⏩11) Go to Metamask, on your make sure you have "Goerli" testnet.
+Also you will need some test tokens, so go to "https://goerlifaucet.com/" and get some test tokens
+Then copy your account private key.
+
+⏩12) Create the .env file at the root of your folder and paste your metamask account private key inside quotes
+PRIVATE_KEY="....private key...."
+
+⏩13)Go to alchemy website, create Ethereum-goerli app, click on "view key" and copy https endpoint.
+Then go to .env file paste it as below. Be careful, it is template literals (``), not quotes("")
+PROVIDER_URL=`....link.....`
+
+⏩14) Add ".env" to your .gitignore file
+
+⏩15) Then go to hardhat.config.js and add this line to beginning of the file:
+
+require("dotenv").config();
+
+Also add these lines:
+
+module.exports = {
+  solidity: "0.8.7",
+  networks: {
+    goerli: {
+      url: process.env.PROVIDER_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`]
+    }
+  }
+};
+
+⏩16) npx hardhat compile
+
+⏩17) npx hardhat run ./scripts/deploy.js --network goerli
+
+⏩18) Copy the contract address somewhere.
+
+
+
+
+🚩🚩🚩 CONNECTION PART 🚩🚩🚩
+⏩19)Go to app.js component and this:
+
+  let contract;
+  const connectContract = async () => {
+    const Address = "0x0988033De05B4D13300fB74Ec2A0F66a5b84978b";
+    const ABI = ;
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    contract = new ethers.Contract( Address, ABI, signer );
+    console.log(contract.address)
+  }
+
+
+⏩20)
+  const getData = async () => {
+    const phrase = await contract.myWord();
+    setContractData(phrase);
+  }
+⏩21) npm start and test it.
