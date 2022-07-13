@@ -160,3 +160,41 @@ module.exports = {
     setContractData(phrase);
   }
 ⏩21) npm start and test it.
+
+
+
+🌠🌠🌠 REACT + SOLIDITY + GOERLI + HARDHAT + METAMASK + ETHERS + ALCHEMY 🌠🌠🌠
+
+Hello, in this video, we will create a simple full stack React + Smart Contract application. We will use Hardhat for deploying our contract and we will deploy our contract to Goerli test network.  we will use Ethers package to build connection between React and Smart Contract. We will use Dotenv package to store our sensitive data. We will get node service from Alchemy. Steps are:
+
+1) create a React application and make a cleanup
+2) install all hardhat packages including ethers and dotenv.
+3) Create the react component and connect it to metamask.
+4) Create a hardhat project and create a simple smart contract inside Contracts folder. Then add deployment code to "deploy.js" under "scripts" folder. 
+5) Then update hardhat.config.js file with necessary code.
+6) Create .env file add inside PRIVATE_KEY from Metamask and PROVIDER_URL from Alchemy.
+7) Deploy contract to Goerli.
+8) Grab contarct account address and go to App.js component and the remaining functions. 
+9) First create the function that will connect react to smart contract. 
+10) Then create another function to access a variable from smart contract and display its value on the webpage. 
+
+Github:
+https://github.com/abdulhakim-altunkaya/SOLIDITY-web3-youtube/tree/main/react_hardhat
+
+Step-by-Step guide:
+https://github.com/abdulhakim-altunkaya/SOLIDITY-web3-youtube/blob/main/react_hardhat/n_react_hardhat_goerli.txt
+
+NOTE: All videos on this channel are for exercise purposes. For tutorial purposes I kindly advise you to watch great teachers below:
+
+Solidity:
+1) Smart Contract Programmer: https://www.youtube.com/channel/UCJWh7F3AFyQ_x01VKzr9eyA
+2) Eat the Blocks:
+https://www.youtube.com/c/EatTheBlocks
+3) Dapp University:
+https://www.youtube.com/c/DappUniversity
+
+Node-React-Javascript:
+1) The Net Ninja:
+https://www.youtube.com/c/TheNetNinja
+2) Dave Gray : 
+https://www.youtube.com/c/DaveGrayTeachesCode
