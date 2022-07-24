@@ -86,13 +86,6 @@ https://gateway.pinata.cloud/ipfs/QmdyUjhHKBx4zsxkDcVweuagkgRiyJN2qManRxJnwQZVT6
 IPFS:
 ipfs://QmZde57UC4D6V5asJxsvsyYa8wkoX45oQei6Q3xNLxEgiy
 
-⏩NOTE
-PINATA:
-CID of image: QmZTjyffeWkFGnMnaC9kC9RBQ63GR2nxwfenQx6hhUoPwN
-CID of json file: QmdyUjhHKBx4zsxkDcVweuagkgRiyJN2qManRxJnwQZVT6
-IPFS DESKTOP:
-CID of image: QmTDqYFfYpGNgQJoFPzUEEYcX6Hxc27JT4yiyJtbZB5Ceq
-CID of json file: QmZde57UC4D6V5asJxsvsyYa8wkoX45oQei6Q3xNLxEgiy
 
 
 ⏩16) You'll need json file link later when you mint your nft. This will be tokenUri
@@ -100,24 +93,31 @@ CID of json file: QmZde57UC4D6V5asJxsvsyYa8wkoX45oQei6Q3xNLxEgiy
 🚩🚩🚩  HARDHAT PART 🚩🚩🚩
 
 ⏩17) Create your contract: Nusaybin.sol and paste inside:
-//SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.1;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-contract Nusaybin is ERC721, ERC721URIStorage {
-    uint counter;
-    constructor() ERC721("Nusaybin NFT", "NSBN") {}
-    function mintNFT(address receiver, string memory tokenUri) external {
-        _setTokenURI(counter, tokenUri);
-        _safeMint(receiver, counter);
-        counter += 1;
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+contract Goat is ERC721, ERC721URIStorage, Ownable {
+    using Counters for Counters.Counter;
+    Counters.Counter private _tokenIdCounter;
+    constructor() ERC721("Goat NFT", "GOAT") {}
+    function safeMint(address to, string memory uri) public onlyOwner {
+        uint256 tokenId = _tokenIdCounter.current();
+        _tokenIdCounter.increment();
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
     }
-
-        // The following functions are overrides required by Solidity.
+    // The following functions are overrides required by Solidity.
     function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
     }
-    function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+    function tokenURI(uint256 tokenId) public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
         return super.tokenURI(tokenId);
     }
 }
@@ -125,10 +125,10 @@ contract Nusaybin is ERC721, ERC721URIStorage {
 ⏩18) Make sure compiler versions are the same across ".sol" and "hardhat.config.js" files
 ⏩19) Then configure deploy.js
 async function main() {
-  const Nusaybin = await hre.ethers.getContractFactory("Nusaybin");
-  const nusaybin = await Nusaybin.deploy();
-  await nusaybin.deployed();
-  console.log("NFT deployed to:", nusaybin.address);
+  const Goat = await hre.ethers.getContractFactory("Goat");
+  const goat = await Goat.deploy();
+  await goat.deployed();
+  console.log("Goat Contract is deployed to:", goat.address);
 }
 
 ⏩20) npx hardhat compile
@@ -139,20 +139,7 @@ async function main() {
 CONTRACT_ADDRESS = "...contract address......"
 
 
-⏩23) Then go to hardhat.config.js and add this line to beginning of the file:
-
-require("@nomicfoundation/hardhat-toolbox");
-require("dotenv").config();
-
-module.exports = {
-  solidity: "0.8.9",
-  networks: {
-    goerli: {
-      url: process.env.PROVIDER_URL,
-      accounts: [`0x${process.env.PRIVATE_KEY}`]
-    }
-  }
-};
+⏩23) 
 
 ⏩24) npx hardhat compile
 
