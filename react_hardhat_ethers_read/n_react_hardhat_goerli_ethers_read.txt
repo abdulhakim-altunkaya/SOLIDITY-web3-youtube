@@ -4,13 +4,12 @@
 npx create-react-app myproject
 
 ⏩2) 
-npm install --save-dev hardhat
-npm install --save-dev dotenv
-npm install --save-dev @openzeppelin/contracts
-npm install --save-dev @nomicfoundation/hardhat-toolbox @nomiclabs/hardhat-ethers@^2.0.0
-npm install --save-dev "@nomiclabs/hardhat-ethers@^2.0.0"
-npm install --save-dev ethers
-npm install --save-dev "@nomicfoundation/hardhat-network-helpers@^1.0.0" "@nomicfoundation/hardhat-chai-matchers@^1.0.0" "@nomiclabs/hardhat-etherscan@^3.0.0" "@types/mocha@^9.1.0" "@typechain/ethers-v5@^10.1.0" "@typechain/hardhat@^6.1.2" "chai@^4.2.0" "hardhat-gas-reporter@^1.0.8" "solidity-coverage@^0.7.21" "ts-node@>=8.0.0" "typechain@^8.1.0" "typescript@>=4.5.0"
+npm install hardhat
+npm install dotenv
+npm install @openzeppelin/contracts
+npm install "@nomicfoundation/hardhat-toolbox" "@nomiclabs/hardhat-ethers@^2.0.0"
+npm install ethers
+npm install "@nomicfoundation/hardhat-network-helpers@^1.0.0" "@nomicfoundation/hardhat-chai-matchers@^1.0.0" "@nomiclabs/hardhat-etherscan@^3.0.0" "@types/mocha@^9.1.0" "@typechain/ethers-v5@^10.1.0" "@typechain/hardhat@^6.1.2" "chai@^4.2.0" "hardhat-gas-reporter@^1.0.8" "solidity-coverage@^0.7.21" "ts-node@>=8.0.0" "typechain@^8.1.0" "typescript@>=4.5.0"
 
 
 ⏩3) Not obligatory but you can remove unnecessary files from react folders
@@ -79,6 +78,8 @@ display it on browser
 
 🚩🚩🚩 HARDHAT PART 🚩🚩🚩
 
+⏩7) npm init -y
+
 ⏩7) npx hardhat
 
 ⏩8) Go to contracts folder and create a Flower.sol and add inside:
@@ -86,9 +87,6 @@ display it on browser
 pragma solidity >=0.8.7;
 contract Flower {
     string public myFlower = "Rose";
-    function changeWord(string memory _word) external {
-        myFlower = _word;
-    }
 }
 
 ⏩9) Go to "scripts" folder and replace main function with this:
@@ -117,9 +115,8 @@ PROVIDER_URL=`....link.....`
 
 ⏩15) Then go to hardhat.config.js and add this line to beginning of the file:
 
+require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
-
-Also add these lines:
 
 module.exports = {
   solidity: "0.8.7",
@@ -160,41 +157,3 @@ module.exports = {
     setContractData(phrase);
   }
 ⏩21) npm start and test it.
-
-
-
-🌠🌠🌠 REACT + SOLIDITY + GOERLI + HARDHAT + METAMASK + ETHERS + ALCHEMY 🌠🌠🌠
-
-Hello, in this video, we will create a simple full stack React + Smart Contract application. We will use Hardhat for deploying our contract and we will deploy our contract to Goerli test network.  we will use Ethers package to build connection between React and Smart Contract. We will use Dotenv package to store our sensitive data. We will get node service from Alchemy. Steps are:
-
-1) create a React application and make a cleanup
-2) install all hardhat packages including ethers and dotenv.
-3) Create the react component and connect it to metamask.
-4) Create a hardhat project and create a simple smart contract inside Contracts folder. Then add deployment code to "deploy.js" under "scripts" folder. 
-5) Then update hardhat.config.js file with necessary code.
-6) Create .env file add inside PRIVATE_KEY from Metamask and PROVIDER_URL from Alchemy.
-7) Deploy contract to Goerli.
-8) Grab contarct account address and go to App.js component and the remaining functions. 
-9) First create the function that will connect react to smart contract. 
-10) Then create another function to access a variable from smart contract and display its value on the webpage. 
-
-Github:
-https://github.com/abdulhakim-altunkaya/SOLIDITY-web3-youtube/tree/main/react_hardhat
-
-Step-by-Step guide:
-https://github.com/abdulhakim-altunkaya/SOLIDITY-web3-youtube/blob/main/react_hardhat/n_react_hardhat_goerli.txt
-
-NOTE: All videos on this channel are for exercise purposes. For tutorial purposes I kindly advise you to watch great teachers below:
-
-Solidity:
-1) Smart Contract Programmer: https://www.youtube.com/channel/UCJWh7F3AFyQ_x01VKzr9eyA
-2) Eat the Blocks:
-https://www.youtube.com/c/EatTheBlocks
-3) Dapp University:
-https://www.youtube.com/c/DappUniversity
-
-Node-React-Javascript:
-1) The Net Ninja:
-https://www.youtube.com/c/TheNetNinja
-2) Dave Gray : 
-https://www.youtube.com/c/DaveGrayTeachesCode
