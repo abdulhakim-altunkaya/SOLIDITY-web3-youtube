@@ -1,0 +1,172 @@
+🚩🚩🚩 INSTALL PART 🚩🚩🚩
+⏩1) 
+
+npm install "hardhat" "ethers" "dotenv"
+npm install "@nomicfoundation/hardhat-toolbox" "@nomiclabs/hardhat-ethers@^2.0.0" "@openzeppelin/contracts"
+npm install "@nomicfoundation/hardhat-network-helpers@^1.0.0" "@nomicfoundation/hardhat-chai-matchers@^1.0.0" "@nomiclabs/hardhat-etherscan@^3.0.0" "@types/mocha@^9.1.0" "@typechain/ethers-v5@^10.1.0" "@typechain/hardhat@^6.1.2" "chai@^4.2.0" "hardhat-gas-reporter@^1.0.8" "solidity-coverage@^0.7.21" "ts-node@>=8.0.0" "typechain@^8.1.0" "typescript@>=4.5.0"
+
+⏩2) npm init -y
+⏩3) npx hardhat
+
+
+
+🚩🚩🚩 DOTENV and HARDHAT.CONFIG PART 🚩🚩🚩
+
+⏩4) Make sure you are on Metamask Mumbai testnet (or Goerli testnet, whatever you choose)
+and that you have test ether
+⏩5) create a .env file at the root of the folder and put inside code below. Be careful about 
+template literals and quotes.
+PRIVATE_KEY="....mymetamask account private key......"
+PROVIDER_URL=`...the https endpoint from alchemy.....`
+
+
+⏩6) Get the private key of your metamask account and paste it above.
+⏩7) Then go to Alchemy website, create a profile, go to Dashboard, click on "create application",
+then choose "Matic" and then "Mumbai". Then click to "create"
+Then click on "keys" and copy your "https" enpoint and paste it above.
+
+⏩8) Add ".env" to your .gitignore file
+
+⏩9) Go to hardhat.config.js and put inside:
+
+require("@nomicfoundation/hardhat-toolbox");
+require("@nomiclabs/hardhat-ethers");
+require("dotenv").config();
+
+module.exports = {
+  solidity: "0.8.1",
+  networks: {
+    matic: {
+      url: process.env.PROVIDER_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`]
+    }
+  }
+};
+
+
+⏩10) Make sure you contract and hardhat.config file use the same compiler version.
+
+
+🚩🚩🚩 IPFS / PINATA PART 🚩🚩🚩
+
+
+⏩11) Upload your jpeg image photo to pinata or ipfs desktop.
+The image must be JPEG or otherwise you will not see it on nft test marketplaces such as "opensea testnets"
+
+⏩12) Copy the CID put it as below to your browser to see if your file is uploaded. Of course the CID below, should be replaced
+
+by your CID.
+
+PINATA VERSION:
+https://gateway.pinata.cloud/ipfs/QmZTjyffeWkFGnMnaC9kC9RBQ63GR2nxwfenQx6hhUoPwN
+
+IPFS DESKTOP VERSION:
+ipfs://QmZTjyffeWkFGnMnaC9kC9RBQ63GR2nxwfenQx6hhUoPwN
+
+⏩13) Copy the url link above
+⏩14) Create json file at the root of your folder such as "metadata_nft1.json" and 
+put inside this code (paste the link of step 3 as below):
+description, image and name are the most important parts.
+
+{
+    "image": "https://gateway.pinata.cloud/ipfs/QmfCTKMJ9HL3sUiLdPVzRC6wQcycr7QK8ammqSPJsXPsNq",
+    "description": "a nice flower again",
+    "name": "flower again"
+}
+
+For IPFS Desktop version, just replace above image line with below. The rest is the same:
+	"image": "ipfs://QmTDqYFfYpGNgQJoFPzUEEYcX6Hxc27JT4yiyJtbZB5Ceq",
+
+⏩15) Then upload your json file to pinata account or to your IPFS Desktop. And copy the CID number and paste as below to the 
+browser to see if it works:
+PINATE:
+https://gateway.pinata.cloud/ipfs/QmdyUjhHKBx4zsxkDcVweuagkgRiyJN2qManRxJnwQZVT6
+IPFS:
+ipfs://QmZde57UC4D6V5asJxsvsyYa8wkoX45oQei6Q3xNLxEgiy
+
+
+
+⏩16) You'll need json file link later when you mint your nft. This will be tokenUri
+
+🚩🚩🚩  HARDHAT PART 🚩🚩🚩
+
+⏩17) Create your contract: Nusaybin.sol and paste inside:
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.8.1;
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+contract Goat is ERC721, ERC721URIStorage, Ownable {
+    using Counters for Counters.Counter;
+    Counters.Counter private _tokenIdCounter;
+    constructor() ERC721("Goat NFT", "GOAT") {}
+    function safeMint(address to, string memory uri) public onlyOwner {
+        uint256 tokenId = _tokenIdCounter.current();
+        _tokenIdCounter.increment();
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
+    }
+    // The following functions are overrides required by Solidity.
+    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+        super._burn(tokenId);
+    }
+    function tokenURI(uint256 tokenId) public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+}
+
+⏩18) Make sure compiler versions are the same across ".sol" and "hardhat.config.js" files
+⏩19) Then configure deploy.js
+async function main() {
+  const Nusaybin = await hre.ethers.getContractFactory("Nusaybin");
+  const nusaybin = await Nusaybin.deploy();
+  await nusaybin.deployed();
+  console.log("nusaybin Contract is deployed to:", nusaybin.address);
+}
+
+⏩20) npx hardhat compile
+
+⏩21) npx hardhat run ./scripts/deploy.js --network matic
+
+⏩22) copy contract address inside .env file:
+CONTRACT_ADDRESS = "...contract address......"
+
+⏩26) npx hardhat flatten > flattened.sol
+
+This will create a single contract file at the root of your folder. We need this single contract file
+because for verification we need to upload all our code at once to polygon.etherscan.
+
+Then open flattened.sol on code editor, and delete all "SPDX-..." lines because there are more many of these lines
+and it causes error. Delete all of them and type only one at the top of flattened.sol:
+//SPDX-License-Identifier: GPL3.0
+
+⏩30) Then copy all flattened.sol and go to polygon.etherscan, 
+choose single file, then "gpl v3" and then click to "continue"
+
+Then paste inside the box and click on "verify".
+
+⏩31) once your contract is verified, it will create an interface for you interact with your contract.
+
+Go to "safeMint" function, paste your metamask account in address area
+Then paste json file link in tokenUri area
+and click to "write"
+
+This will promt metamask and it will ask you to sign the transaction. Once you sign, it will take some time and your
+metamask account will have the NFT token.
+
+⏩32) To check it, go to to "https://testnets.opensea.io/"
+Make sure you are on your metamask account dashboard. 
+There you should see your nft image.
+
+⏩33) You can also check nft on your metamask.
+Go to metamask, click on "import tokens"
+Then paste contract address.
+Then wait 2 seconds for the name to appear.
+Then enter "0" inside decimal place and click to "import".
+You should see your NFT token.
+

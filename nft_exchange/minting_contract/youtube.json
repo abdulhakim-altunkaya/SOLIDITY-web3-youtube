@@ -1,0 +1,20 @@
+{
+    "description":"youtube test image",
+    "image":"ipfs://QmbESSQm3Adrqk7NWLpUXNcko8JA8eyeAeBczGMsLZvucX",
+    "name":"youtube",
+    "attributes":
+        [
+            {
+                "trait_type":"Background color",
+                "value":"yellow"
+            },
+            {
+                "trait_type":"Number of star colors",
+                "value": "2"
+            },
+            {
+                "trait_type":"Star coloring pattern group",
+                "value": "3"
+            }
+        ]
+}
