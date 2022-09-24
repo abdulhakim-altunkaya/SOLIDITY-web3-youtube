@@ -1,0 +1,166 @@
+🚩🚩🚩 DEPENDENCIES PART 🚩🚩🚩
+
+⏩1) create a react project
+
+For new folders:
+npx create-react-app myproject
+
+For existing folders:
+npx create-react-app .
+
+⏩2) 
+npm install "hardhat" "ethers" "dotenv"
+npm install "@nomicfoundation/hardhat-toolbox" "@nomiclabs/hardhat-ethers@^2.0.0" "@openzeppelin/contracts"
+npm install "@nomicfoundation/hardhat-network-helpers@^1.0.0" "@nomicfoundation/hardhat-chai-matchers@^1.0.0" "@nomiclabs/hardhat-etherscan@^3.0.0" "@types/mocha@^9.1.0" "@typechain/ethers-v5@^10.1.0" "@typechain/hardhat@^6.1.2" "chai@^4.2.0" "hardhat-gas-reporter@^1.0.8" "solidity-coverage@^0.7.21" "ts-node@>=8.0.0" "typechain@^8.1.0" "typescript@>=4.5.0"
+
+
+⏩3) remove unnecessary files from react folders
+
+⏩4) Add your CSS style and basic component structure, then test your react app to see if it works: 
+npm start
+
+⏩5) Initiate hardhat project
+npx hardhat
+
+remove Lock.sol (in contracts folder) and Lock.js (in Tests folder)
+
+
+*** BASIC CSS STRUCTURE *** 
+
+body {
+  background-color: palevioletred;
+  font-family: tahoma;
+  font-size: 33px;
+}
+button {
+  background-color: aquamarine;
+  font-size: 33px;
+  padding: 5px;
+  font-family: Impact;
+}
+button:hover {
+  background-color: yellow;
+}
+
+⏩6) Check if your react application works and with button click you can connect to metamask and grab account info and
+display it on browser
+
+🚩🚩🚩 HARDHAT PART 🚩🚩🚩
+
+⏩7) 
+
+⏩8) Go to contracts folder and create a Cities.sol and add inside:
+//SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.8.1;
+contract Cities {
+    string[] public myCities = ["Mardin", "Stockholm", "Jakarta"];
+    function getArray() external view returns(string[] memory){
+        return myCities;
+    }
+}
+
+⏩9) Go to "scripts" folder and replace main function with this:
+async function main() {
+  const Cities = await hre.ethers.getContractFactory("Cities");
+  const cities = await Cities.deploy();
+  await cities.deployed();
+  console.log("Contract deployed to:", cities.address);
+}
+
+
+⏩10) Make sure pragma solidity are same in Cities.sol and hardhat.config.js
+
+⏩11) Go to Metamask, on your make sure you have "Mumbai" testnet.
+Also you will need some test tokens, so go to "https://mumbaifaucet.com/" and get some test tokens
+Then copy your account private key.
+
+⏩12) Create the .env file at the root of your folder and paste your metamask account private key inside quotes
+PRIVATE_KEY="....private key...."
+
+⏩13)Go to alchemy website, create Polygon-Mumbai app, click on "view key" and copy https endpoint.
+Then go to .env file paste it as below. Be careful, it is template literals (``), not quotes("")
+PROVIDER_URL=`....link.....`
+
+⏩14) Add ".env" to your .gitignore file
+
+⏩15) Then go to hardhat.config.js and add this line to beginning of the file:
+require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config();
+
+module.exports = {
+  solidity: "0.8.1",
+  networks: {
+    mumbai: {
+      url: process.env.PROVIDER_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`]
+    }
+  }
+};
+
+⏩16) npx hardhat compile
+
+⏩17) npx hardhat run ./scripts/deploy.js --network mumbai
+
+⏩18) Copy the contract address somewhere.
+
+
+**** THEN CREATE COMPONENT ******
+
+
+import React from 'react'
+import { useState } from 'react';
+import { ethers } from "ethers";
+import {CONTRACT_ADDRESS} from "./ContractAddress";
+import {ABI} from "./ContractABI";
+
+function App() {
+  const { ethereum } = window;
+  let [account, setAccount] = useState("");
+
+  const connectMetamask =  async () => {
+    if(window.ethereum !== "undefined") {
+      const accounts = await ethereum.request({ method: "eth_requestAccounts"});
+      setAccount(accounts[0]);
+    } else {
+      setAccount("install metamask to your browser my good lord");
+    }
+  }
+    
+  let contract;
+  let signer;
+  const CONTRACT_ABI = ABI;
+  const ADDRESS = CONTRACT_ADDRESS;
+
+  const connectContract = async () => {
+        const Address = ADDRESS;
+        const ABI = CONTRACT_ABI;
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        contract = new ethers.Contract(Address, ABI, signer);
+  }
+
+  let listCities = [];
+  const getArray = async () => {
+        connectContract();
+        const txResponse = await contract.getArray();
+        listCities = txResponse;
+  }
+  let[content, setContent] = useState("");
+  const displayArray = async () => {
+        await getArray();
+        setContent(listCities.map(city => <span key={city}> <span>{city}</span> </span>));
+  }
+
+  return (
+    <div className="App">
+          <button onClick={connectMetamask}>CONNECT TO METAMASK</button>
+          <p>{account}</p>
+	    <button onClick={displayArray} >display array</button>
+          <br />
+          <ul>{content}</ul>
+
+    </div>
+  );
+}
+export default App;
+
