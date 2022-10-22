@@ -1,0 +1,129 @@
+♿ 
+npm install hardhat ethers dotenv
+npm install "@aave/core-v3" 
+npm install "@nomicfoundation/hardhat-toolbox"
+npx hardhat
+
+♿ fund your metamask account from aave faucet, grab some usdc, dai and coin of your choice
+staging.aave.com/faucet/
+
+♿ Create your .env file:
+PRIVATE_KEY="bc97ce19440d9145b1fe0c894251405730a1be4c0181cb8bf36976ae75ca2818"
+PROVIDER_URL=`https://fantom-testnet.s.chainbase.online/v1/2G8K0AA2RuTSSGCSHq2Hx3NyQNc`
+
+♿ Create your contract
+
+♿ Create your deployment file
+
+♿ Update your hardhat.config.js:
+require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config();
+module.exports = {
+  solidity: "0.8.10",
+  networks: {
+    goerli: {
+      url: process.env.PROVIDER_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`]
+    }
+  }
+};
+
+♿ DEPLOY THE CONTRACT
+
+♿ Create an interface for your contract. You can do this on Remix.
+
+♿ Dont forget to send some tokens to your your contract. If you will request USDC as flashloan,
+then send some usdc to your contract. The same for other tokens. Because your contract
+needs to pay fee in the currency it borrows.
+
+☔ We will create a custom function requesting funds from Aave. such as "flashloan()"
+For aave flashloan we need to implement "IFlashLoanSimpleReceiverBase.sol"
+and we need to include "executeOperation()" function inside our contract. 
+This function will be called by Aave. This function will include our arbitrage and a logic
+to let aave to pull back loan+fee
+
+☔ In case you have Remix erros: 1) dont forget to connect metamask to remix, 2) dont forget to transfer a little flashloan 
+currency(usdc/usdt/dai/etc) to the contract for paying gas, 3)make sure pragma versions are same between hardhat.config.js and contracts 
+
+☔ 
+1000000000 (1000 usdc -- 6 decimals)
+1200000000000000000000 (1200 dai -- 18 decimals)
+
+☔ 
+AAVE deployment addresses: https://docs.aave.com/developers/deployed-contracts/deployed-contracts
+AAVE faucet: https://staging.aave.com/faucet/
+FANTOM faucet: https://faucet.fantom.network/
+FANTOM testnet scan: https://testnet.ftmscan.com/
+
+☔ 
+TESTNET_FANTOM=""
+AAVE_POOLADDRESSPROVIDER="0xE339D30cBa24C70dCCb82B234589E3C83249e658"
+USDT="0x1b901d3C9D4ce153326BEeC60e0D4A2e8a9e3cE3"
+DAI="0xc469ff24046779DE9B61Be7b5DF91dbFfdF1AE02"
+USDC="0x06f0790c687A1bED6186ce3624EDD9806edf9F4E"
+CURVE="0xAC1a9503D1438B56BAa99939D44555FC2dC286Fc"
+SUSHI="0x484b87Aa284f51e71F15Eba1aEb06dFD202D5511"
+LINK="0x42Dc50EB0d35A62eac61f4E4Bc81875db9F9366e"
+
+☔ 
+FOR REMIX IN CASE YOU NEED:
+import {FlashLoanSimpleReceiverBase} from "https://github.com/aave/aave-v3-core/blob/master/contracts/flashloan/base/FlashLoanSimpleReceiverBase.sol";
+import {IPoolAddressesProvider} from "https://github.com/aave/aave-v3-core/blob/master/contracts/interfaces/IPoolAddressesProvider.sol";
+import {IERC20} from "https://github.com/aave/aave-v3-core/blob/master/contracts/dependencies/openzeppelin/contracts/IERC20.sol";
+
+
+
+
+
+☔ 
+//SDPX-License-Identifier: MIT
+
+pragma solidity >=0.8.10;
+
+import {FlashLoanSimpleReceiverBase} from "@aave/core-v3/contracts/flashloan/base/FlashLoanSimpleReceiverBase.sol";
+import {IPoolAddressesProvider} from "@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol";
+import {IERC20} from "@aave/core-v3/contracts/dependencies/openzeppelin/contracts/IERC20.sol";
+
+contract FlashLoan is FlashLoanSimpleReceiverBase {
+    address payable public owner;
+    modifier onlyOwner() {
+        require(msg.sender == owner, "you are not owner");
+        _;
+    }
+    constructor(address _addressProvider) FlashLoanSimpleReceiverBase(IPoolAddressesProvider(_addressProvider)) {
+        owner = payable(msg.sender);
+    }
+
+    function executeOperation(
+        address asset, 
+        uint amount, 
+        uint premium, 
+        address initiator, 
+        bytes calldata params
+    ) external override returns(bool) {
+        uint amountOwed = amount + premium;
+        IERC20(asset).approve(address(POOL), amountOwed);
+        //approve(spender, amount)
+        return true;
+    }
+
+    function requestFlashLoan(address _token, uint _amount) public {
+        address receiverAddress = address(this);
+        address asset = _token;
+        uint amount = _amount;
+        bytes memory params = "";
+        uint16 referralCode = 0;
+        POOL.flashLoanSimple(receiverAddress, asset, amount, params, referralCode);
+    }
+
+    function getBalance(address tokenAddress) external view returns(uint) {
+        return IERC20(tokenAddress).balanceOf(address(this));
+    }
+
+    function withdraw(address tokenAddress, uint amount) external {
+        IERC20 token = IERC20(tokenAddress);
+        token.transfer(msg.sender, amount);
+    }
+
+    receive() external payable{}
+}
