@@ -1,0 +1,56 @@
+0) Open this webpage and take a look:
+https://docs.chain.link/docs/vrf/v2/subscription/examples/get-a-random-number/#create-and-deploy-a-vrf-v2-compatible-contract
+
+
+1) Add "Fantom testnet" to your metamask.
+
+2) Go to Fantom testnet faucet and get some FTM tokens
+https://faucet.fantom.network/
+
+3) Go to this website and find "Fantom testnet" settings
+https://docs.chain.link/docs/vrf/v2/subscription/supported-networks/#fantom-testnet
+
+First add "LINK" token to your Metamask, you will see a button for this.
+
+Then go to LINK faucet for Fantom testnet and get some LINK tokens
+https://faucets.chain.link/fantom-testnet
+
+4)Open subscription manager: https://vrf.chain.link/fantom-testnet
+You can find this link also on the webpage in step 0.
+
+5) Click on "create subscription"
+
+6) Enter your Metamask account which has FTM and LINK tokens
+
+7) Then Add funds. Sending 10 LINK tokens is more than enough.
+
+8) You will need a chainlink contract to get random numbers. This contract is called
+"VRFv2Consumer.sol". You can find contract on the webpage in step 0. On that webpage,
+you will see a button "Open in Remix" button, click on it. 
+
+9) You can deploy this contract without anychange if you are using Goerli Testnet.
+However we are using Fantom Testnet. So, CHANGE
+
+0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D ===>>>> 0xbd13f08b8352A3635218ab9418E340c60d6Eb418
+0x79d3d8832d904592c0bf9818b621522c988bb8b0c05cdc3b15aea1b6e8db0c15 ===>>> 0x121a143066e0f2f08b620784af77cccb35c6242460b4a8ee251b4b416abaebd4
+ 
+10) Make sure, you are using "injected provider" on Remix
+and make sure your Metamask account and Fantom testnet is connected to Remix.
+
+11) Go to your subscription page, you will find an "id" number. Copy it and go back to Remix.
+Compile the contract and then in the deployment, paste "id" number as constructor argument and click "deploy" button.
+
+12) Then copy contract address and go to subscription page. There add contract address by clicking "Add Consumer" button. 
+
+13) Open contract interaction interface area:
+-click on "requestRandomWords" button. This will produce a "requestId"
+-Then click on "lastRequestId" button. This will show "requestId". Copy it. 
+-Then go to "getRequestStatus" button. Paster the request and click on the button.
+It will show you a bool value and uint[] value. uint[] contains our random numbers.
+"randomWords" should not confuse you. They are random numbers.
+
+14) You will see we have 2 random numbers. That's because we asked chainlink to produce 2 random numbers.
+On contract, try to find "uint32 numWords = 2;" If you change it to 1, then you will get 1 random number.
+
+
+
