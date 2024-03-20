@@ -1,0 +1,38 @@
+
+npm install "hardhat" "ethers" "dotenv" "@nomicfoundation/hardhat-toolbox" "@nomicfoundation/hardhat-ignition"
+
+npx hardhat init
+
+Create Contract
+Update hardhat.config.js file
+Create .env file
+Create a deployment file in Ignition folder
+
+npx hardhat compile
+
+npx hardhat ignition deploy ignition/modules/Token.js --network fantomtest
+
+
+FILES
+
+/****HARDHAT.CONFIG.JS****/
+require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-ignition");
+require("dotenv").config();
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: "0.8.24",
+  networks: {
+    fantomtest: {
+      url: process.env.PROVIDER_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`]
+    }
+  }
+};
+
+
+/****ENV*****/
+PROVIDER_URL=`https://rpc.ankr.com/fantom_testnet`
+PRIVATE_KEY="f2d082f3fff87b5d940da3d4086ef3448d977246ff239cb0d588848762fceefd3"
+
+
