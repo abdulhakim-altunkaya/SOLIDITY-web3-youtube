@@ -2,13 +2,13 @@
 pragma solidity ^0.8.24;
 
 contract Token {
-
-    string public tokenName;
     uint public tokenCap;
+    string public tokenName;
 
-    constructor(string memory _name, uint _cap) {
-        tokenName = _name;
+
+    constructor(uint _cap, string memory _name) payable {
         tokenCap = _cap;
-    } 
-    
+        tokenName = _name;
+    }
+
 }

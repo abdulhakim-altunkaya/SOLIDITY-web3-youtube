@@ -1,5 +1,5 @@
 
-npm install "hardhat" "ethers" "dotenv" "@nomicfoundation/hardhat-toolbox" "@nomicfoundation/hardhat-ignition"
+npm install "hardhat" "dotenv" "@nomicfoundation/hardhat-toolbox" "@nomicfoundation/hardhat-ignition"
 
 npx hardhat init
 

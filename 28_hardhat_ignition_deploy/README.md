@@ -1,13 +1,31 @@
-# Sample Hardhat Project
+# Hardhat Ignition Fantom Tutorial
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+Welcome to our tutorial on deploying contracts to the Fantom testnet using Hardhat Ignition!
 
-Try running some of the following tasks:
+## Overview
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.js
-```
+This tutorial will guide you through deploying smart contracts on the Fantom testnet using Hardhat Ignition. We'll cover the basics step by step, making it easy to follow along.
+
+## Features
+
+- Step-by-step guide for deploying contracts
+- Introduction to Hardhat Ignition
+- Easy explanation of contract deployment concepts
+- Using dotenv for managing environment variables
+
+## Requirements
+
+You'll need:
+- Node.js installed
+- Basic knowledge of Ethereum smart contract development
+- Familiarity with JavaScript/TypeScript
+
+## Getting Started
+
+Just follow the video tutorial. If you stuck with some files, come here to copy paste the file to fix your error. Also check out the step-by-step guide.
+
+
+For questions: drysoftware1@gmail.com
+
+
+Abdulhakim Luanda, 2024
