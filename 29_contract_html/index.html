@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WEB3 APP</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js" ></script>
+    <style>
+        body {
+            background-color: palevioletred;
+            font-size: 33px;
+            text-align: center;
+        }
+        button {
+            background-color: aquamarine;
+            font-size: 33px;
+            font-family: Impact;
+        }
+        button:hover {
+            background-color: slateblue;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="connectMetamask()">Connect Metamask</button>
+    <p id="accountArea"></p>
+    <button onclick="connectContract()">Connect Contract</button>
+    <p id="contractArea"></p>
+    <button onclick="readContract()">Read Contract</button>
+    <p id="readArea"></p>
+
+    <script>
+        //If I take accessToMetamask function part out, then the code will still work. 
+        //However I will not be able to call a write method. Because I would not have an 
+        //account to send gas.
+        let account;
+        const connectMetamask = async () => {
+            if(window.ethereum !== "undefined") {
+                const accounts = await ethereum.request({ method: "eth_requestAccounts"});
+                account = accounts[0];
+                document.getElementById("accountArea").innerHTML = account;
+            }
+        }
+
+        let contractApple;
+        const connectContract = async () => {
+            const Address = "0x4DD03400c698A4aC5e09744260b46A92f2eb0621";
+            const ABI = [
+                {
+                "inputs": [],
+                "name": "city",
+                "outputs": [
+                    {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+                }
+            ];
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            contractApple = new ethers.Contract(Address, ABI, signer);
+            document.getElementById("contractArea").innerHTML = contractApple.address;
+        }
+
+        const readContract = async () => {
+            const myData = await contractApple.city();
+            document.getElementById("readArea").innerHTML = myData;
+        }
+
+
+    </script>
+</body>
+</html>

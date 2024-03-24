@@ -1,0 +1,135 @@
+npm install "express" "hardhat" "ethers" "dotenv" "@nomicfoundation/hardhat-toolbox" "@nomicfoundation/hardhat-ignition"
+
+npx hardhat init
+
+npx hardhat compile
+
+npx hardhat ignition deploy ignition/modules/Token.js --network fantomtest
+
+
+FILES
+
+/****HARDHAT.CONFIG.JS****/
+require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-ignition");
+require("dotenv").config();
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: "0.8.24",
+  networks: {
+    fantomtest: {
+      url: process.env.PROVIDER_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`]
+    }
+  }
+};
+
+
+
+/*****SERVER.JS*****/
+const express = require("express");
+const path = require("path");
+const app = express();
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname + "/index.html"));
+})
+const port = process.env.PORT || 5000;
+app.listen( port, () => {
+  console.log(`server is running on ${port}`);
+})
+
+
+
+
+/****ENV*****/
+PROVIDER_URL=`https://rpc.ankr.com/fantom_testnet`
+PRIVATE_KEY="f2d082f3ff87b5d940db3d4086ef5448d977205ff239cb0d588848762fceefd3"
+
+/***Token.js*****/
+const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
+module.exports = buildModule("AppleModule", (m) => {
+  const myContract = m.contract("Apple", []);
+
+  return { myContract };
+});
+
+
+
+
+/*****HTML FILE*****/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WEB3 APP</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js" ></script>
+    <style>
+        body {
+            background-color: palevioletred;
+            font-size: 33px;
+            text-align: center;
+        }
+        button {
+            background-color: aquamarine;
+            font-size: 33px;
+            font-family: Impact;
+        }
+        button:hover {
+            background-color: slateblue;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="connectMetamask()">Connect Metamask</button>
+    <p id="accountArea"></p>
+    <button onclick="connectContract()">Connect Contract</button>
+    <p id="contractArea"></p>
+    <button onclick="readContract()">Read Contract</button>
+    <p id="readArea"></p>
+
+    <script>
+        //If I take accessToMetamask function part out, then the code will still work. 
+        //However I will not be able to call a write method. Because I would not have an 
+        //account to send gas.
+        let account;
+        const connectMetamask = async () => {
+            if(window.ethereum !== "undefined") {
+                const accounts = await ethereum.request({ method: "eth_requestAccounts"});
+                account = accounts[0];
+                document.getElementById("accountArea").innerHTML = account;
+            }
+        }
+
+        let contractToken;
+        const connectContract = async () => {
+            const Address = "0x5eC9F28Ac3f7051DCF12f3Fa7944028dd220D7D5";
+            const ABI = [
+                {
+                "inputs": [],
+                "name": "tokenName",
+                "outputs": [
+                    {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+                }
+            ];
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            contractApple = new ethers.Contract(Address, ABI, signer);
+            document.getElementById("contractArea").innerHTML = contractToken.address;
+        }
+
+        const readContract = async () => {
+            const myData = await contractToken.cityName();
+            document.getElementById("readArea").innerHTML = myData;
+        }
+
+
+    </script>
+</body>
+</html>
