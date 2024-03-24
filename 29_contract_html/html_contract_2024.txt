@@ -40,18 +40,24 @@ app.listen( port, () => {
 
 
 
-
 /****ENV*****/
 PROVIDER_URL=`https://rpc.ankr.com/fantom_testnet`
 PRIVATE_KEY="f2d082f3ff87b5d940db3d4086ef5448d977205ff239cb0d588848762fceefd3"
 
-/***Token.js*****/
+/***APPLE.JS*****/
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 module.exports = buildModule("AppleModule", (m) => {
-  const myContract = m.contract("Apple", []);
-
-  return { myContract };
+  const appleContract = m.contract("Apple", [] );
+  return { appleContract };
 });
+
+
+/****CONTRACT*****/
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.24;
+contract Apple {
+    string public city = "Cizre";
+}
 
 
 
@@ -99,14 +105,13 @@ module.exports = buildModule("AppleModule", (m) => {
                 document.getElementById("accountArea").innerHTML = account;
             }
         }
-
-        let contractToken;
+        let contractApple;
         const connectContract = async () => {
-            const Address = "0x5eC9F28Ac3f7051DCF12f3Fa7944028dd220D7D5";
+            const Address = "0x4DD03400c698A4aC5e09744260b46A92f2eb0621";
             const ABI = [
                 {
                 "inputs": [],
-                "name": "tokenName",
+                "name": "city",
                 "outputs": [
                     {
                     "internalType": "string",
@@ -121,15 +126,13 @@ module.exports = buildModule("AppleModule", (m) => {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
             contractApple = new ethers.Contract(Address, ABI, signer);
-            document.getElementById("contractArea").innerHTML = contractToken.address;
+            document.getElementById("contractArea").innerHTML = contractApple.address;
         }
-
         const readContract = async () => {
-            const myData = await contractToken.cityName();
+            const myData = await contractApple.city();
             document.getElementById("readArea").innerHTML = myData;
         }
-
-
     </script>
 </body>
 </html>
+
