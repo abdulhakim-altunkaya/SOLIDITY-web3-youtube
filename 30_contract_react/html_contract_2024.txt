@@ -1,0 +1,99 @@
+npm install "express" "hardhat" "ethers" "dotenv" "@nomicfoundation/hardhat-toolbox" "@nomicfoundation/hardhat-ignition"
+
+npx hardhat init
+
+npx hardhat compile
+
+npx hardhat ignition deploy ignition/modules/Token.js --network fantomtest
+
+
+FILES
+
+/****HARDHAT.CONFIG.JS****/
+require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-ignition");
+require("dotenv").config();
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: "0.8.24",
+  networks: {
+    fantomtest: {
+      url: process.env.PROVIDER_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`]
+    }
+  }
+};
+
+
+
+/****ENV*****/
+PROVIDER_URL=`https://rpc.ankr.com/fantom_testnet`
+PRIVATE_KEY="f2d082f3ff87b5d940db3d4086ef5448d977205ff239cb0d588848762fceefd3"
+
+/***APPLE.JS*****/
+const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
+module.exports = buildModule("AppleModule", (m) => {
+  const appleContract = m.contract("Apple", [] );
+  return { appleContract };
+});
+
+
+/****CONTRACT*****/
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.24;
+contract Apple {
+    string public myCity = "Mardin";
+}
+
+/**ABI-ADDRESS***/
+export const contractABI = []
+export const contractAddress = "" 
+
+
+/*****MAIN COMPONENT*****/
+import React, {useState} from 'react';
+import {ethers} from "ethers";
+import { contractABI } from "../AddressABI/contractABI";
+import { contractAddress } from "../AddressABI/contractAddress";
+
+function Main() {
+
+  const {ethereum} = window;
+
+  const [paragraph1, setParagraph1] = useState("");
+  const [paragraph2, setParagraph2] = useState("");
+
+  const connectMetamask = async () => {
+    if(window.ethereum !== "undefined") {
+      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+      console.log(accounts[0]);
+      setParagraph1(accounts[0]);
+    }
+  }
+
+  let contractApple;
+
+  const connectContract = async () => {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    contractApple = new ethers.Contract(contractAddress, contractABI, signer);
+    const myData = await contractApple.myCity();
+    setParagraph2(myData);
+    //bonus:
+    console.log(contractApple.target);
+  }
+
+  return (
+    <div>
+      <button onClick={connectMetamask}>Connect Metamask</button>
+      <p>{paragraph1}</p>
+      
+      <button onClick={connectContract}>Connect Contract</button>
+      <p>{paragraph2}</p>
+    
+    </div>
+  )
+}
+
+export default Main
+

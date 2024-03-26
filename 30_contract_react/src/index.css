@@ -1,0 +1,14 @@
+body {
+  background-color: palevioletred;
+  font-size: 33px;
+  text-align: center;
+}
+button {
+  background-color: aquamarine;
+  font-size: 33px;
+  font-family: Impact;
+}
+button:hover {
+  background-color: slateblue;
+  cursor: pointer;
+}
